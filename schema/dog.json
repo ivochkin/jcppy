@@ -1,0 +1,22 @@
+{
+    "name": "Dog",
+    "type": "object",
+    "properties": {
+        "age": {
+            "type": "integer",
+            "default": 5
+        },
+        "name": {
+            "type": "string",
+            "default": "Sharik"
+        },
+        "gender": {
+            "type": "boolean",
+            "default": true
+        },
+        "weight": {
+            "type": "number",
+            "default": "12.95"
+        }
+    }
+}

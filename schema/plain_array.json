@@ -1,0 +1,11 @@
+{
+    "type": "object",
+    "name": "ShoppingList",
+    "properties": {
+        "id": { "type": "string", "format":"uuid" },
+        "items": {
+            "type":"array",
+            "items": { "type": "integer" }
+        }
+    }
+}

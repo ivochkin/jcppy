@@ -1,0 +1,6 @@
+[submodule "external/gtest"]
+	path = external/gtest
+	url = https://github.com/isn-/gtest.git
+[submodule "external/rapidjson"]
+	path = external/rapidjson
+	url = https://github.com/kennytm/rapidjson.git

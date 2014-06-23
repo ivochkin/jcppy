@@ -1,0 +1,17 @@
+{
+    "type": "object",
+    "name": "Outer",
+    "properties": {
+        "id": { "type": "string", "format":"uuid" },
+        "position": {
+            "type":"object",
+            "name": "Position",
+            "properties": {
+                "x": {"type": "integer" },
+                "y": {"type": "integer" },
+                "z": {"type": "integer", "default": -1 }
+            },
+            "required": ["x", "y"]
+        }
+    }
+}
