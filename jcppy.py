@@ -442,7 +442,7 @@ def writeJsonAny(name, schema, o):
 
     if schema['generator'] == 'uuid':
         o('{\n')
-        oo('auto tmp = boost::lexical_cast<std::string>({});\n'.format(name));
+        oo('auto tmp = boost::uuids::to_string({});\n'.format(name));
         oo('writer->String(tmp.c_str(), tmp.length());\n')
         o('}\n')
         return
@@ -749,6 +749,7 @@ def header(env, schema, o):
 
     if hasUuid:
         o('#include <boost/uuid/uuid.hpp>\n')
+        o('#include <boost/uuid/uuid_io.hpp>\n')
 
     if hasDateTime:
         o('#include <boost/date_time/posix_time/posix_time_types.hpp>\n')
@@ -788,7 +789,6 @@ def source(env, schema, o):
     o('#include <sstream>\n')
 
     if env['useBoostUuid']:
-        o('#include <boost/lexical_cast.hpp>\n')
         o('#include <boost/uuid/uuid_io.hpp>\n')
         o('#include <boost/uuid/uuid_generators.hpp>\n')
 
