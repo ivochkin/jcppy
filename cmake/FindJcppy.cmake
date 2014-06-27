@@ -10,8 +10,10 @@ find_program(JCPPY_EXECUTABLE jcppy.py
   DOC "Path to jcppy executable"
 )
 
+find_package(PythonInterp REQUIRED)
+
 if(JCPPY_EXECUTABLE)
-  execute_process(COMMAND ${JCPPY_EXECUTABLE} --version
+  execute_process(COMMAND ${PYTHON_EXECUTABLE} ${JCPPY_EXECUTABLE} --version
     ERROR_VARIABLE JCPPY_VERSION
     OUTPUT_VARIABLE JCPPY_VERSION
     OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -90,8 +92,8 @@ function(JCPPY_GENERATE)
     add_custom_command(
       OUTPUT "${JCPPY_OUTPUT_DIR}/${WE}.h"
              "${JCPPY_OUTPUT_DIR}/${WE}.cpp"
-      COMMAND ${JCPPY_EXECUTABLE}
-      ARGS ${INVOKE_ARGS} --output-dir ${JCPPY_OUTPUT_DIR} ${ABS}
+      COMMAND ${PYTHON_EXECUTABLE}
+      ARGS ${JCPPY_EXECUTABLE} ${INVOKE_ARGS} --output-dir ${JCPPY_OUTPUT_DIR} ${ABS}
       DEPENDS ${i}
       DEPENDS ${JCPPY_EXECUTABLE}
       COMMENT "Running jccpy generator on ${i}"
