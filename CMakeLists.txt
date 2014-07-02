@@ -9,7 +9,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(external/gtest)
 include_directories(SYSTEM external/gtest/include)
-include_directories(SYSTEM external)
+include_directories(SYSTEM external/rapidjson/include)
 
 find_package(Threads REQUIRED)
 link_libraries(${CMAKE_THREAD_LIBS_INIT})

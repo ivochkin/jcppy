@@ -34,4 +34,8 @@ target_link_libraries(${name}
 )
 
 add_test(unit-tests "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${name}")
-add_test(style ${PYLINT_EXECUTABLE} ${CMAKE_SOURCE_DIR}/jcppy.py)
+add_test(style ${PYLINT_EXECUTABLE}
+    --max-line-length 100
+    --good-names i,j,k,ex,Run,_,__,o,oo,s
+    ${CMAKE_SOURCE_DIR}/jcppy.py
+)
