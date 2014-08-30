@@ -1,6 +1,6 @@
 set(name ut-jcppy)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -gdwarf-2 -pedantic -Wall -Wextra -Werror -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -gdwarf-2 -pedantic -Wall -Wextra -std=c++11")
 
 set(schemas
   ${CMAKE_SOURCE_DIR}/schema/core.json
