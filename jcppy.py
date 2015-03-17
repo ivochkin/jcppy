@@ -606,14 +606,22 @@ def source_object(env, schema, o):
 
     o('\n')
     o('{0}::{0}(){1}\n'.format(class_name, env['noexcept']))
-    oo(': ')
-    o('\n  , '.join(['has{}_(false)'.format(title(i)) for i in schema['properties'].keys()]))
-    o('\n')
+    if env['delegatingCtors']:
+        oo(': ')
+        o('\n  , '.join(['has{}_(false)'.format(title(i)) for i in schema['properties'].keys()]))
+        o('\n')
     o('{\n')
+    if not env['delegatingCtors']:
+        oo('clear();\n')
     o('}\n')
 
-    snippet(env, o, 'ctor_stream.inl', spec)
-    snippet(env, o, 'ctor_string.inl', spec)
+    if env['delegatingCtors']:
+        snippet(env, o, 'ctor_stream.inl', spec)
+        snippet(env, o, 'ctor_string.inl', spec)
+    else:
+        snippet(env, o, 'no_delegating_ctor_stream.inl', spec)
+        snippet(env, o, 'no_delegating_ctor_string.inl', spec)
+
     snippet(env, o, 'json.inl', spec)
     snippet(env, o, 'write_json.inl', spec)
 
@@ -868,6 +876,10 @@ def main():
         , help='use BOOST_THROW_EXCEPTION macro instead of throw()'
         , default=True
         , action='store_true')
+    parser.add_argument('--delegating-constructors'
+        , help='use c++11 delegating constructors in generated code'
+        , default=False
+        , action='store_true')
     parser.add_argument('--verbose'
         , help='print debug messages'
         , default=False
@@ -896,6 +908,7 @@ def main():
             'useBase64': False,
             'useBoostThrowException' : args.boost_throw_exception,
             'noexcept': ' noexcept' if args.noexcept else '',
+            'delegatingCtors': args.delegating_constructors,
             'snippet_dir': args.snippet_dir
         }
         with open(i) as schema_fo\
