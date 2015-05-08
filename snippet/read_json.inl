@@ -6,7 +6,7 @@ void %(class)s::readJson(std::istream& is)
   if (doc.HasParseError()) {
     std::stringstream errMessage;
     errMessage << "Can not parse json for object %(class)s . Error at offset "
-      << doc.GetErrorOffset() << " : " << GetParseError_En(doc.GetParseError());
+      << doc.GetErrorOffset() << " : " << rapidjson::GetParseError_En(doc.GetParseError());
     JCPPY_THROW(std::runtime_error(errMessage.str()));
   }
   readDocument(&doc);
