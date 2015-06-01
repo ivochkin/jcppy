@@ -12,6 +12,8 @@ public:
   char Take() { char c = current_; read(); return c; }
   int Tell() const { return count_; }
 
+  typedef char Ch;
+
   // methods needed by destructive json parser
   IStreamWrapper& operator=(const IStreamWrapper& other)
   {
