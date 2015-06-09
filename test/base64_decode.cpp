@@ -2,6 +2,8 @@
 
 #include <gtest/gtest.h>
 
+#define JCPPY_THROW(x) throw x
+
 namespace {
 
 #include <snippet/from_base64.inl>

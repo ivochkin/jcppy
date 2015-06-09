@@ -810,6 +810,12 @@ def source(env, schema, o):
     o('#include "{}"\n'.format(env.header))
 
     o('\n')
+    if env.use_boost_throw_exception:
+        o('#define JCPPY_THROW(x) BOOST_THROW_EXCEPTION(x)\n')
+    else:
+        o('#define JCPPY_THROW(x) throw x\n')
+
+    o('\n')
     o('namespace {\n')
 
     snippet(env, o, 'ostream_wrapper.inl')
@@ -833,12 +839,6 @@ def source(env, schema, o):
     o('typedef rapidjson::Document Document;\n')
     for i in all_names('', schema):
         o('typedef {}::{} {};\n'.format(env.namespace, i, i.split('::')[-1]))
-
-    o('\n')
-    if env.use_boost_throw_exception:
-        o('#define JCPPY_THROW(x) BOOST_THROW_EXCEPTION(x)\n')
-    else:
-        o('#define JCPPY_THROW(x) throw x\n')
 
     source_object(env, schema, o)
 

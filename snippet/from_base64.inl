@@ -61,7 +61,7 @@ std::vector<char> fromBase64(const char* data, std::size_t size)
     case 0:
       break;
     case 1:
-      throw std::runtime_error("Bad base64");
+      JCPPY_THROW(std::runtime_error("Bad base64"));
     case 2:
       res.push_back(byte1);
       break;
