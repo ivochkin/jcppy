@@ -18,6 +18,10 @@ import argparse
 import pprint
 import codecs
 
+class Environment(object):
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+
 
 def debug(obj):
     'Pretty print object. Useful for debugging'
@@ -36,7 +40,7 @@ def title(word):
 
 def snippet(env, o, name, specification=None):
     'Return snippet content with format provided in specification'
-    with open(os.path.join(env['snippet_dir'], name)) as snippet_fo:
+    with open(os.path.join(env.snippet_dir, name)) as snippet_fo:
         template = snippet_fo.read()
         o('\n')
         o(template % specification if specification else template)
@@ -109,13 +113,13 @@ def resolve_cpp_types(env, s, first_pass=False):
 
     if not first_pass:
         if s['generator'] == 'uuid':
-            env['useBoostUuid'] = True
+            env.use_boost_uuid = True
         if s['generator'] == 'date-time':
-            env['useBoostDateTime'] = True
+            env.use_boost_datetime = True
         if s['generator'] == 'utc-millisec':
-            env['useBoostCstdint'] = True
+            env.use_boost_cstdint = True
         if s['generator'] == 'base64':
-            env['useBase64'] = True
+            env.use_base64 = True
 
     for i in s.get('properties', {}).values():
         i = resolve_cpp_types(env, i, first_pass)
@@ -143,8 +147,8 @@ def header_has_clear(env, name, o):
 
     o('\n')
     o('public:\n')
-    o('  bool has{}() const{};\n'.format(title(name), env['noexcept']))
-    o('  void clear{}(){};\n'.format(title(name), env['noexcept']))
+    o('  bool has{}() const{};\n'.format(title(name), env.use_noexcept))
+    o('  void clear{}(){};\n'.format(title(name), env.use_noexcept))
     o('private:\n')
     o('  bool has{}_;\n'.format(title(name)))
 
@@ -153,13 +157,13 @@ def source_has_clear(env, mem_name, class_name, o):
     'Generate definition of hasFoo() clearFoo() methods'
 
     o('\n')
-    o('bool {}::has{}() const{}\n'.format(title(class_name), title(mem_name), env['noexcept']))
+    o('bool {}::has{}() const{}\n'.format(title(class_name), title(mem_name), env.use_noexcept))
     o('{\n')
     o('  return has{}_;\n'.format(title(mem_name)))
     o('}\n')
 
     o('\n')
-    o('void {}::clear{}(){}\n'.format(title(class_name), title(mem_name), env['noexcept']))
+    o('void {}::clear{}(){}\n'.format(title(class_name), title(mem_name), env.use_noexcept))
     o('{\n')
     o('  has{}_ = false;\n'.format(title(mem_name)))
     o('}\n')
@@ -181,11 +185,11 @@ def header_default(env, name, schema, o):
 
     if schema['generator'] == 'string':
         o('  static constexpr const char* default{}(){} {{ return "{}"; }}\n'\
-            .format(title(name), env['noexcept'], default_value))
+            .format(title(name), env.use_noexcept, default_value))
         return
 
     o('  static constexpr {} default{}(){} {{ return {}; }}\n'\
-        .format(schema['arg_type'], title(name), env['noexcept'], default_value))
+        .format(schema['arg_type'], title(name), env.use_noexcept, default_value))
 
 
 def header_primitive(env, name, schema, o):
@@ -197,8 +201,8 @@ def header_primitive(env, name, schema, o):
     o('public:\n')
     oo('{0} {1}() const;\n'.format(schema['arg_type'], name))
     oo('void set{0}({1} new{0}){2}\n'
-        .format(title(name), schema['arg_type'], '' if env['noexcept'] else ';'))
-    if env['noexcept']:
+        .format(title(name), schema['arg_type'], '' if env.use_noexcept else ';'))
+    if env.use_noexcept:
         ooo('noexcept(std::is_nothrow_copy_constructible<{}>::value);\n'.format(schema['sto_type']))
     o('private:\n')
     oo('{0} {1}_;\n'.format(schema['sto_type'], name))
@@ -224,7 +228,7 @@ def source_primitive(env, mem_name, class_name, schema, o):
 
     o('\n')
     o('void {0}::set{1}({2} new{1})\n'.format(class_name, title(mem_name), schema['arg_type']))
-    if env['noexcept']:
+    if env.use_noexcept:
         oo('noexcept(std::is_nothrow_copy_constructible<{}>::value)\n'.format(schema['sto_type']))
     o('{\n')
     oo('{0}_ = new{1};\n'.format(mem_name, title(mem_name)))
@@ -243,15 +247,15 @@ def header_movable(env, name, schema, o):
 
     o('\n')
     o('public:\n')
-    oo('{} {}() const{};\n'.format(arg_type, name, env['noexcept']))
+    oo('{} {}() const{};\n'.format(arg_type, name, env.use_noexcept))
     oo('void set{0}({1} new{0});\n'.format(title(name), arg_type))
-    oo('void set{0}({1}&& new{0}){2};\n'.format(title(name), sto_type, env['noexcept']))
+    oo('void set{0}({1}&& new{0}){2};\n'.format(title(name), sto_type, env.use_noexcept))
 
     header_has_clear(env, name, o)
 
     o('\n')
     o('public:\n')
-    o('  {}* mutable{}(){};\n'.format(sto_type, title(name), env['noexcept']))
+    o('  {}* mutable{}(){};\n'.format(sto_type, title(name), env.use_noexcept))
 
     o('\n')
     o('private:\n')
@@ -269,7 +273,7 @@ def source_movable(env, mem_name, class_name, schema, o):
     sto_type = schema['sto_type']
 
     o('\n')
-    o('{} {}::{}() const{}\n'.format(arg_type, class_name, mem_name, env['noexcept']))
+    o('{} {}::{}() const{}\n'.format(arg_type, class_name, mem_name, env.use_noexcept))
     o('{\n')
     oo('if (!has{}_) {{\n'.format(title(mem_name)))
     ooo('JCPPY_THROW(std::runtime_error("Member \\"{}\\" is not set"));\n'.format(mem_name))
@@ -286,7 +290,7 @@ def source_movable(env, mem_name, class_name, schema, o):
 
     o('\n')
     o('void {0}::set{1}({2}&& new{1}){3}\n'
-        .format(class_name, title(mem_name), sto_type, env['noexcept']))
+        .format(class_name, title(mem_name), sto_type, env.use_noexcept))
     o('{\n')
     oo('{0}_ = std::move(new{1});\n'.format(mem_name, title(mem_name)))
     oo('has{}_ = true;\n'.format(title(mem_name)))
@@ -296,7 +300,7 @@ def source_movable(env, mem_name, class_name, schema, o):
 
     o('\n')
     o('{}* {}::mutable{}(){}\n'
-        .format(sto_type, title(class_name), title(mem_name), env['noexcept']))
+        .format(sto_type, title(class_name), title(mem_name), env.use_noexcept))
     o('{\n')
     oo('has{}_ = true;\n'.format(title(mem_name)))
     oo('return &{}_;\n'.format(mem_name))
@@ -309,10 +313,10 @@ def header_base64(env, name, _, o):
 
     o('\n')
     o('public:\n')
-    oo('const std::vector<char>& {}() const{};\n'.format(name, env['noexcept']))
+    oo('const std::vector<char>& {}() const{};\n'.format(name, env.use_noexcept))
     oo('void set{0}(const std::vector<char>& new{0});\n'.format(title(name)))
-    oo('void set{0}(std::vector<char>&& new{0}){1};\n'.format(title(name), env['noexcept']))
-    oo('std::vector<char>* mutable{}(){};\n'.format(title(name), env['noexcept']))
+    oo('void set{0}(std::vector<char>&& new{0}){1};\n'.format(title(name), env.use_noexcept))
+    oo('std::vector<char>* mutable{}(){};\n'.format(title(name), env.use_noexcept))
     header_has_clear(env, name, o)
     o('private:\n')
     oo('std::vector<char> {}_;\n'.format(name))
@@ -322,7 +326,7 @@ def source_base64(env, mem_name, class_name, _, o):
     'Generate definitions for base64 type'
     oo = indent(o)
 
-    o('const std::vector<char>& {}::{}() const{}\n'.format(class_name, mem_name, env['noexcept']))
+    o('const std::vector<char>& {}::{}() const{}\n'.format(class_name, mem_name, env.use_noexcept))
     o('{\n')
     oo('return {}_;\n'.format(mem_name))
     o('}\n')
@@ -336,14 +340,14 @@ def source_base64(env, mem_name, class_name, _, o):
 
     o('\n')
     o('void {0}::set{1}(std::vector<char>&& new{1}){2}\n'
-        .format(class_name, title(mem_name), env['noexcept']))
+        .format(class_name, title(mem_name), env.use_noexcept))
     o('{\n')
     oo('{0}_ = std::move(new{1});\n'.format(mem_name, title(mem_name)))
     oo('has{}_ = true;\n'.format(title(mem_name)))
     o('}\n')
 
     o('\n')
-    o('std::vector<char>* {}::mutable{}(){}\n'.format(class_name, title(mem_name), env['noexcept']))
+    o('std::vector<char>* {}::mutable{}(){}\n'.format(class_name, title(mem_name), env.use_noexcept))
     o('{\n')
     oo('has{}_ = true;\n'.format(title(mem_name)))
     oo('return &{}_;\n'.format(mem_name))
@@ -368,7 +372,7 @@ def header_object(env, _, schema, o):
     o('{\n')
     oo('friend class JcppyHelper;\n')
     o('public:\n')
-    oo('{}(){};\n'.format(schema['name'], env['noexcept']))
+    oo('{}(){};\n'.format(schema['name'], env.use_noexcept))
     oo('explicit {}(std::istream&);\n'.format(schema['name']))
     oo('explicit {}(const std::string&);\n'.format(schema['name']))
 
@@ -605,17 +609,17 @@ def source_object(env, schema, o):
     }
 
     o('\n')
-    o('{0}::{0}(){1}\n'.format(class_name, env['noexcept']))
-    if env['delegatingCtors']:
+    o('{0}::{0}(){1}\n'.format(class_name, env.use_noexcept))
+    if env.use_delegating_constructors:
         oo(': ')
         o('\n  , '.join(['has{}_(false)'.format(title(i)) for i in schema['properties'].keys()]))
         o('\n')
     o('{\n')
-    if not env['delegatingCtors']:
+    if not env.use_delegating_constructors:
         oo('clear();\n')
     o('}\n')
 
-    if env['delegatingCtors']:
+    if env.use_delegating_constructors:
         snippet(env, o, 'ctor_stream.inl', spec)
         snippet(env, o, 'ctor_string.inl', spec)
     else:
@@ -740,9 +744,9 @@ def header(env, schema, o):
     o('#include <vector>\n')
     o('#include <type_traits>\n')
 
-    has_date_time = env['useBoostDateTime']
-    has_uuid = env['useBoostUuid']
-    has_cstdint = env['useBoostCstdint']
+    has_date_time = env.use_boost_datetime
+    has_uuid = env.use_boost_uuid
+    has_cstdint = env.use_boost_cstdint
 
     if has_uuid:
         o('#include <boost/uuid/uuid.hpp>\n')
@@ -768,7 +772,7 @@ def header(env, schema, o):
         o('} // namespace jcppy\n')
 
     o('\n')
-    o('\n'.join(['namespace {} {{'.format(i) for i in env['namespace'].split('::')]) + '\n')
+    o('\n'.join(['namespace {} {{'.format(i) for i in env.namespace.split('::')]) + '\n')
 
     o('\n')
     o('class JcppyHelper;\n')
@@ -776,25 +780,25 @@ def header(env, schema, o):
     header_object(env, None, schema, o)
 
     o('\n')
-    o('}' * len(env['namespace'].split('::')) + ' // namespace {}\n'.format(env['namespace']))
+    o('}' * len(env.namespace.split('::')) + ' // namespace {}\n'.format(env.namespace))
 
 
 def source(env, schema, o):
     'Generate source file for entire schema'
 
-    o('/// @file Generated by jcppy ({})\n'.format(env['version']))
+    o('/// @file Generated by jcppy ({})\n'.format(env.version))
     o('/// @warning Do not edit!\n')
     o('#include <stdexcept>\n')
     o('#include <sstream>\n')
 
-    if env['useBoostUuid']:
+    if env.use_boost_uuid:
         o('#include <boost/uuid/uuid_io.hpp>\n')
         o('#include <boost/uuid/uuid_generators.hpp>\n')
 
-    if env['useBoostDateTime']:
+    if env.use_boost_datetime:
         o('#include <boost/date_time/posix_time/posix_time.hpp>\n')
 
-    if env['useBoostThrowException']:
+    if env.use_boost_throw_exception:
         o('#include <boost/throw_exception.hpp>\n')
 
     o('#include <boost/utility/string_ref.hpp>\n')
@@ -803,7 +807,7 @@ def source(env, schema, o):
     o('#include <rapidjson/document.h>\n')
     o('#include <rapidjson/error/en.h>\n')
 
-    o('#include "{}"\n'.format(env['header']))
+    o('#include "{}"\n'.format(env.header))
 
     o('\n')
     o('namespace {\n')
@@ -811,7 +815,7 @@ def source(env, schema, o):
     snippet(env, o, 'ostream_wrapper.inl')
     snippet(env, o, 'istream_wrapper.inl')
 
-    if env['useBase64']:
+    if env.use_base64:
         snippet(env, o, 'base64.inl')
         snippet(env, o, 'from_base64.inl')
 
@@ -819,19 +823,19 @@ def source(env, schema, o):
     o('} // anonymous namespace\n')
 
     o('\n')
-    o('\n'.join(['namespace {} {{'.format(i) for i in env['namespace'].split('::')]) + '\n')
+    o('\n'.join(['namespace {} {{'.format(i) for i in env.namespace.split('::')]) + '\n')
     snippet(env, o, 'jcppy_helper.inl')
     o('\n')
-    o('}' * len(env['namespace'].split('::')) + ' // namespace {}\n'.format(env['namespace']))
+    o('}' * len(env.namespace.split('::')) + ' // namespace {}\n'.format(env.namespace))
 
     o('\n')
     o('typedef rapidjson::Writer<::OStreamWrapper> Writer;\n')
     o('typedef rapidjson::Document Document;\n')
     for i in all_names('', schema):
-        o('typedef {}::{} {};\n'.format(env['namespace'], i, i.split('::')[-1]))
+        o('typedef {}::{} {};\n'.format(env.namespace, i, i.split('::')[-1]))
 
     o('\n')
-    if env['useBoostThrowException']:
+    if env.use_boost_throw_exception:
         o('#define JCPPY_THROW(x) BOOST_THROW_EXCEPTION(x)\n')
     else:
         o('#define JCPPY_THROW(x) throw x\n')
@@ -896,28 +900,29 @@ def main():
         if not args.output_dir is None:
             header_file = os.path.join(args.output_dir, header_file)
             source_file = os.path.join(args.output_dir, source_file)
-        env = {
-            'version': JCPPY_VERSION,
-            'namespace' : args.namespace,
-            'header' : header_file,
-            'source' : source_file,
-            'verbose' : args.verbose,
-            'useBoostUuid' : False,
-            'useBoostDateTime' : False,
-            'useBoostCstdint' : False,
-            'useBase64': False,
-            'useBoostThrowException' : args.boost_throw_exception,
-            'noexcept': ' noexcept' if args.noexcept else '',
-            'delegatingCtors': args.delegating_constructors,
-            'snippet_dir': args.snippet_dir
-        }
+
+        env = Environment(
+            version=JCPPY_VERSION,
+            namespace=args.namespace,
+            header=header_file,
+            source=source_file,
+            verbose=args.verbose,
+            use_boost_uuid=False,
+            use_boost_datetime=False,
+            use_boost_cstdint=False,
+            use_base64=False,
+            use_boost_throw_exception=args.boost_throw_exception,
+            use_noexcept=' noexcept' if args.noexcept else '',
+            use_delegating_constructors=args.delegating_constructors,
+            snippet_dir=args.snippet_dir)
+
         with open(i) as schema_fo\
             , codecs.open(header_file, 'w', 'utf-8') as header_fo\
             , codecs.open(source_file, 'w', 'utf-8') as source_fo:
             schema = json.loads(schema_fo.read())
             schema = resolve_cpp_types(env, schema, first_pass=True)
             schema = resolve_cpp_types(env, schema, first_pass=False)
-            if env['verbose']:
+            if env.verbose:
                 debug(schema)
             header(env, schema, header_fo.write)
             source(env, schema, source_fo.write)
