@@ -147,8 +147,8 @@ def header_has_clear(env, name, o):
 
     o('\n')
     o('public:\n')
-    o('  bool has{}() const{};\n'.format(title(name), env.use_noexcept))
-    o('  void clear{}(){};\n'.format(title(name), env.use_noexcept))
+    o('  bool has{}() const JCPPY_NOEXCEPT;\n'.format(title(name)))
+    o('  void clear{}() JCPPY_NOEXCEPT;\n'.format(title(name)))
     o('private:\n')
     o('  bool has{}_;\n'.format(title(name)))
 
@@ -157,13 +157,13 @@ def source_has_clear(env, mem_name, class_name, o):
     'Generate definition of hasFoo() clearFoo() methods'
 
     o('\n')
-    o('bool {}::has{}() const{}\n'.format(title(class_name), title(mem_name), env.use_noexcept))
+    o('bool {}::has{}() const JCPPY_NOEXCEPT\n'.format(title(class_name), title(mem_name)))
     o('{\n')
     o('  return has{}_;\n'.format(title(mem_name)))
     o('}\n')
 
     o('\n')
-    o('void {}::clear{}(){}\n'.format(title(class_name), title(mem_name), env.use_noexcept))
+    o('void {}::clear{}() JCPPY_NOEXCEPT\n'.format(title(class_name), title(mem_name)))
     o('{\n')
     o('  has{}_ = false;\n'.format(title(mem_name)))
     o('}\n')
@@ -184,12 +184,12 @@ def header_default(env, name, schema, o):
     o('public:\n')
 
     if schema['generator'] == 'string':
-        o('  static constexpr const char* default{}(){} {{ return "{}"; }}\n'\
-            .format(title(name), env.use_noexcept, default_value))
+        o('  static constexpr const char* default{}() JCPPY_NOEXCEPT {{ return "{}"; }}\n'\
+            .format(title(name), default_value))
         return
 
-    o('  static constexpr {} default{}(){} {{ return {}; }}\n'\
-        .format(schema['arg_type'], title(name), env.use_noexcept, default_value))
+    o('  static constexpr {} default{}() JCPPY_NOEXCEPT {{ return {}; }}\n'\
+        .format(schema['arg_type'], title(name), default_value))
 
 
 def header_primitive(env, name, schema, o):
@@ -200,10 +200,8 @@ def header_primitive(env, name, schema, o):
     o('\n')
     o('public:\n')
     oo('{0} {1}() const;\n'.format(schema['arg_type'], name))
-    oo('void set{0}({1} new{0}){2}\n'
-        .format(title(name), schema['arg_type'], '' if env.use_noexcept else ';'))
-    if env.use_noexcept:
-        ooo('noexcept(std::is_nothrow_copy_constructible<{}>::value);\n'.format(schema['sto_type']))
+    oo('void set{0}({1} new{0})\n'.format(title(name), schema['arg_type']))
+    ooo('JCPPY_NOEXCEPT_IF(std::is_nothrow_copy_constructible<{}>::value);\n'.format(schema['sto_type']))
     o('private:\n')
     oo('{0} {1}_;\n'.format(schema['sto_type'], name))
 
@@ -228,8 +226,7 @@ def source_primitive(env, mem_name, class_name, schema, o):
 
     o('\n')
     o('void {0}::set{1}({2} new{1})\n'.format(class_name, title(mem_name), schema['arg_type']))
-    if env.use_noexcept:
-        oo('noexcept(std::is_nothrow_copy_constructible<{}>::value)\n'.format(schema['sto_type']))
+    oo('JCPPY_NOEXCEPT_IF(std::is_nothrow_copy_constructible<{}>::value)\n'.format(schema['sto_type']))
     o('{\n')
     oo('{0}_ = new{1};\n'.format(mem_name, title(mem_name)))
     oo('has{}_ = true;\n'.format(title(mem_name)))
@@ -247,15 +244,15 @@ def header_movable(env, name, schema, o):
 
     o('\n')
     o('public:\n')
-    oo('{} {}() const{};\n'.format(arg_type, name, env.use_noexcept))
+    oo('{} {}() const JCPPY_NOEXCEPT;\n'.format(arg_type, name))
     oo('void set{0}({1} new{0});\n'.format(title(name), arg_type))
-    oo('void set{0}({1}&& new{0}){2};\n'.format(title(name), sto_type, env.use_noexcept))
+    oo('void set{0}({1}&& new{0}) JCPPY_NOEXCEPT;\n'.format(title(name), sto_type))
 
     header_has_clear(env, name, o)
 
     o('\n')
     o('public:\n')
-    o('  {}* mutable{}(){};\n'.format(sto_type, title(name), env.use_noexcept))
+    o('  {}* mutable{}() JCPPY_NOEXCEPT;\n'.format(sto_type, title(name)))
 
     o('\n')
     o('private:\n')
@@ -273,7 +270,7 @@ def source_movable(env, mem_name, class_name, schema, o):
     sto_type = schema['sto_type']
 
     o('\n')
-    o('{} {}::{}() const{}\n'.format(arg_type, class_name, mem_name, env.use_noexcept))
+    o('{} {}::{}() const JCPPY_NOEXCEPT\n'.format(arg_type, class_name, mem_name))
     o('{\n')
     oo('if (!has{}_) {{\n'.format(title(mem_name)))
     ooo('JCPPY_THROW(std::runtime_error("Member \\"{}\\" is not set"));\n'.format(mem_name))
@@ -289,8 +286,8 @@ def source_movable(env, mem_name, class_name, schema, o):
     o('}\n')
 
     o('\n')
-    o('void {0}::set{1}({2}&& new{1}){3}\n'
-        .format(class_name, title(mem_name), sto_type, env.use_noexcept))
+    o('void {0}::set{1}({2}&& new{1}) JCPPY_NOEXCEPT\n'
+        .format(class_name, title(mem_name), sto_type))
     o('{\n')
     oo('{0}_ = std::move(new{1});\n'.format(mem_name, title(mem_name)))
     oo('has{}_ = true;\n'.format(title(mem_name)))
@@ -299,8 +296,8 @@ def source_movable(env, mem_name, class_name, schema, o):
     source_has_clear(env, mem_name, class_name, o)
 
     o('\n')
-    o('{}* {}::mutable{}(){}\n'
-        .format(sto_type, title(class_name), title(mem_name), env.use_noexcept))
+    o('{}* {}::mutable{}() JCPPY_NOEXCEPT\n'
+        .format(sto_type, title(class_name), title(mem_name)))
     o('{\n')
     oo('has{}_ = true;\n'.format(title(mem_name)))
     oo('return &{}_;\n'.format(mem_name))
@@ -313,10 +310,10 @@ def header_base64(env, name, _, o):
 
     o('\n')
     o('public:\n')
-    oo('const std::vector<char>& {}() const{};\n'.format(name, env.use_noexcept))
+    oo('const std::vector<char>& {}() const JCPPY_NOEXCEPT;\n'.format(name))
     oo('void set{0}(const std::vector<char>& new{0});\n'.format(title(name)))
-    oo('void set{0}(std::vector<char>&& new{0}){1};\n'.format(title(name), env.use_noexcept))
-    oo('std::vector<char>* mutable{}(){};\n'.format(title(name), env.use_noexcept))
+    oo('void set{0}(std::vector<char>&& new{0}) JCPPY_NOEXCEPT;\n'.format(title(name)))
+    oo('std::vector<char>* mutable{}() JCPPY_NOEXCEPT;\n'.format(title(name)))
     header_has_clear(env, name, o)
     o('private:\n')
     oo('std::vector<char> {}_;\n'.format(name))
@@ -326,7 +323,7 @@ def source_base64(env, mem_name, class_name, _, o):
     'Generate definitions for base64 type'
     oo = indent(o)
 
-    o('const std::vector<char>& {}::{}() const{}\n'.format(class_name, mem_name, env.use_noexcept))
+    o('const std::vector<char>& {}::{}() const JCPPY_NOEXCEPT\n'.format(class_name, mem_name))
     o('{\n')
     oo('return {}_;\n'.format(mem_name))
     o('}\n')
@@ -339,15 +336,15 @@ def source_base64(env, mem_name, class_name, _, o):
     o('}\n')
 
     o('\n')
-    o('void {0}::set{1}(std::vector<char>&& new{1}){2}\n'
-        .format(class_name, title(mem_name), env.use_noexcept))
+    o('void {0}::set{1}(std::vector<char>&& new{1}) JCPPY_NOEXCEPT\n'
+        .format(class_name, title(mem_name)))
     o('{\n')
     oo('{0}_ = std::move(new{1});\n'.format(mem_name, title(mem_name)))
     oo('has{}_ = true;\n'.format(title(mem_name)))
     o('}\n')
 
     o('\n')
-    o('std::vector<char>* {}::mutable{}(){}\n'.format(class_name, title(mem_name), env.use_noexcept))
+    o('std::vector<char>* {}::mutable{}() JCPPY_NOEXCEPT\n'.format(class_name, title(mem_name)))
     o('{\n')
     oo('has{}_ = true;\n'.format(title(mem_name)))
     oo('return &{}_;\n'.format(mem_name))
@@ -372,7 +369,7 @@ def header_object(env, _, schema, o):
     o('{\n')
     oo('friend class JcppyHelper;\n')
     o('public:\n')
-    oo('{}(){};\n'.format(schema['name'], env.use_noexcept))
+    oo('{}() JCPPY_NOEXCEPT;\n'.format(schema['name']))
     oo('explicit {}(std::istream&);\n'.format(schema['name']))
     oo('explicit {}(const std::string&);\n'.format(schema['name']))
 
@@ -609,7 +606,7 @@ def source_object(env, schema, o):
     }
 
     o('\n')
-    o('{0}::{0}(){1}\n'.format(class_name, env.use_noexcept))
+    o('{0}::{0}() JCPPY_NOEXCEPT\n'.format(class_name))
     if env.use_delegating_constructors:
         oo(': ')
         o('\n  , '.join(['has{}_(false)'.format(title(i)) for i in schema['properties'].keys()]))
@@ -757,6 +754,14 @@ def header(env, schema, o):
 
     if has_cstdint:
         o('#include <boost/cstdint.hpp>\n')
+
+    o('\n')
+    if env.use_noexcept:
+        o('#define JCPPY_NOEXCEPT noexcept\n')
+        o('#define JCPPY_NOEXCEPT_IF(x) noexcept(x)\n')
+    else:
+        o('#define JCPPY_NOEXCEPT\n')
+        o('#define JCPPY_NOEXCEPT_IF\n')
 
     if has_uuid or has_date_time or has_cstdint:
         o('\n')
@@ -912,7 +917,7 @@ def main():
             use_boost_cstdint=False,
             use_base64=False,
             use_boost_throw_exception=args.boost_throw_exception,
-            use_noexcept=' noexcept' if args.noexcept else '',
+            use_noexcept=args.noexcept,
             use_delegating_constructors=args.delegating_constructors,
             snippet_dir=args.snippet_dir)
 
