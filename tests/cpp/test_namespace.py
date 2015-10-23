@@ -15,14 +15,14 @@ class TestMakeNamespace(unittest.TestCase):
 
     def test_one(self):
         n = make_namespace("foo")
-        self.assertIsNone(n.parent)
+        self.assertTrue(n.parent is None)
         self.assertEqual("foo", n.name)
         self.assertEqual(1, n.nesting_level())
 
     def test_two(self):
         n = make_namespace("foo", "bar")
-        self.assertIsNotNone(n.parent)
-        self.assertIsNone(n.parent.parent)
+        self.assertFalse(n.parent is None)
+        self.assertTrue(n.parent.parent is None)
         self.assertEqual("bar", n.name)
         self.assertEqual("foo", n.parent.name)
         self.assertEqual(2, n.nesting_level())

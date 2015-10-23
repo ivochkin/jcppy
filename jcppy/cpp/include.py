@@ -43,4 +43,4 @@ class Include(cpp.ast.AST):
 
     def write(self, out):
         brackets = ("\"", "\"") if self.quotes else ("<", ">")
-        out("#include {}{}{}".format(brackets[0], self.name, brackets[1]))
+        out("#include {0}{1}{2}".format(brackets[0], self.name, brackets[1]))

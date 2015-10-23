@@ -45,27 +45,27 @@ class Class(cpp.ast.AST):
             for base in vis.base:
                 decl_length += len(vis.name) + len(base) + 1
                 if self.config.classes.hide_private_inheritance and vis.name == "private":
-                    bases.append("{}".format(base))
+                    bases.append("{0}".format(base))
                 else:
-                    bases.append("{} {}".format(vis.name, base))
+                    bases.append("{0} {1}".format(vis.name, base))
         if decl_length > self.config.linewidth and len(bases):
-            out("{} {}".format(struct, self.name))
+            out("{0} {1}".format(struct, self.name))
             iout = out.indent()[0]
-            iout(": {}".format(bases[0]))
+            iout(": {0}".format(bases[0]))
             for i in bases[1:-1]:
                 iout(", " + i)
             if self.config.newline_before_curly_bracket:
                 iout(", " + bases[-1])
                 out("{")
             else:
-                iout("{} {{".format(bases[-1]))
+                iout("{0} {{".format(bases[-1]))
         else:
             inheritance = " : " + ", ".join(bases) if len(bases) else ""
             if self.config.newline_before_curly_bracket:
-                out("{} {}{}".format(struct, self.name, inheritance))
+                out("{0} {1}{2}".format(struct, self.name, inheritance))
                 out("{")
             else:
-                out("{} {}{} {{".format(struct, self.name, inheritance))
+                out("{0} {1}{2} {{".format(struct, self.name, inheritance))
 
         def _write_visibility(vis, out):
             if not vis.has_any():
@@ -74,7 +74,7 @@ class Class(cpp.ast.AST):
             if self.config.indent.class_visibility_specifier > 0:
                 out = out.indent(self.config.indent.class_visibility_specifier)[0]
 
-            out("{}:".format(vis.name))
+            out("{0}:".format(vis.name))
 
             out = out.indent()[0]
 

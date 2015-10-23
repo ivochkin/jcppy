@@ -19,9 +19,9 @@ class TestInclude(unittest.TestCase):
         self.assertTrue(inc3.quotes)
 
     def test_order(self):
-        self.assertLess(Include.STD_C, Include.STD_CPP)
-        self.assertLess(Include.CONTRIB_C, Include.CONTRIB_CPP)
-        self.assertLess(Include.OWN_IFACE, Include.OWN_IMPL)
+        self.assertTrue(Include.STD_C < Include.STD_CPP)
+        self.assertTrue(Include.CONTRIB_C < Include.CONTRIB_CPP)
+        self.assertTrue(Include.OWN_IFACE < Include.OWN_IMPL)
 
 
 class TestIncludeNaming(unittest.TestCase):

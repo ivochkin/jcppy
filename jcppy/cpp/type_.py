@@ -73,7 +73,7 @@ class Type(object):
         return "".join([const, typ, ref])
 
     def format_var(self, var):
-        return "{} {}".format(self.format_self(), var.name)
+        return "{0} {1}".format(self.format_self(), var.name)
 
     def is_bultin_type(self):
         return not isinstance(self.typ, (cpp.struct.Class, cpp.struct.Struct))

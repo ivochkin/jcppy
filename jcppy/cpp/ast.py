@@ -61,4 +61,4 @@ class AST(object):
             chld.print_tree(indent + 1)
 
     def __str__(self):
-        return "<AST {}>".format(self._name)
+        return "<AST {0}>".format(self._name)

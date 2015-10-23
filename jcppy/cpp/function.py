@@ -112,26 +112,26 @@ class Function(cpp.ast.AST):
 
     @property
     def declaration(self):
-        return "{}{}{} {}({}){};".format(self.specifier,
-                                         " " if len(self.specifier) else "",
-                                         self.returns.format_self(),
-                                         self.name,
-                                         ", ".join([i.format_self() for i in self.args]),
-                                         " = 0" if self.pure_virtual else "")
+        return "{0}{1}{2} {3}({4}){5};".format(self.specifier,
+                                               " " if len(self.specifier) else "",
+                                               self.returns.format_self(),
+                                               self.name,
+                                               ", ".join([i.format_self() for i in self.args]),
+                                               " = 0" if self.pure_virtual else "")
 
     def write_declaration(self, out):
         if len(self.declaration) <= self.config.linewidth or len(self.args) == 0:
             out(self.declaration)
             return
 
-        out("{}{}{} {}(".format(self.specifier,
-                                " " if len(self.specifier) else "",
-                                self.returns.format_self(),
-                                self.name))
+        out("{0}{1}{2} {3}(".format(self.specifier,
+                                    " " if len(self.specifier) else "",
+                                    self.returns.format_self(),
+                                    self.name))
         indent = out.indent(self.config.indent.function_declaration)[-1]
         for arg in self.args[:-1]:
             indent(arg.format_self() + ",")
-        indent("{}){};".format(self.args[-1].format_self(), " = 0" if self.pure_virtual else ""))
+        indent("{0}){1};".format(self.args[-1].format_self(), " = 0" if self.pure_virtual else ""))
 
     def __str__(self):
-        return "<Function {}>".format(self.declaration)
+        return "<Function {0}>".format(self.declaration)

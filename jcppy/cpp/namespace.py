@@ -31,10 +31,10 @@ class Namespace(cpp.ast.AST):
         if self.config.indent.namespace_declaration > 0:
             out = out.indent(self.config.indent.namespace_declaration * (self.nesting_level() - 1))[0]
         if self.config.newline_before_curly_bracket:
-            out("namespace {}".format(self.name))
+            out("namespace {0}".format(self.name))
             out("{")
         else:
-            out("namespace {} {{".format(self.name))
+            out("namespace {0} {{".format(self.name))
 
     def write_footer(self, out):
         if self.config.namespaces.group_right_brackets:

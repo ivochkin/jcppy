@@ -16,17 +16,17 @@ class Array(JsonObject):
 
     def _struct_internals(self, o):
         self.element.variable(o, '*data')
-        o('{} size;'.format(env.size_type))
+        o('{0} size;'.format(env.size_type))
 
     def typedef(self, o, typename):
         o('typedef struct {')
         self._struct_internals(o.indent())
-        o('}} {};'.format(typename))
+        o('}} {0};'.format(typename))
 
     def variable(self, o, name):
         o('struct {')
         self._struct_internals(o.indent())
-        o('}} {};'.format(name))
+        o('}} {0};'.format(name))
 
     def validate(self, o, varname):
         need_validate = False
@@ -34,7 +34,7 @@ class Array(JsonObject):
         for prop, sign in cases:
             if not prop is None:
                 need_validate = True
-                o('if ({}.size {} {}) {{'.format(varname, sign, prop))
+                o('if ({0}.size {1} {2}) {{'.format(varname, sign, prop))
                 o('return -1;', indent=1)
                 o('}')
         return need_validate
