@@ -15,28 +15,28 @@ class TestVariable(unittest.TestCase):
         self.decl = Variable(Type("int"), "foo")
 
     def test_plain(self):
-        decl = to_string(self.decl.write)
+        decl = to_string(self.decl)
         self.assertEqual(_l(decl), "int foo;\n")
 
     def test_pointer(self):
         self.decl.typ.pointer = True
-        decl = to_string(self.decl.write)
+        decl = to_string(self.decl)
         self.assertEqual(_l(decl), "int* foo;\n")
 
     def test_reference(self):
         self.decl.typ.reference = True
-        decl = to_string(self.decl.write)
+        decl = to_string(self.decl)
         self.assertEqual(_l(decl), "int& foo;\n")
 
     def test_const(self):
         self.decl.typ.const = True
-        decl = to_string(self.decl.write)
+        decl = to_string(self.decl)
         self.assertEqual(_l(decl), "const int foo;\n")
 
     def test_const_reference(self):
         self.decl.typ.reference = True
         self.decl.typ.const = True
-        decl = to_string(self.decl.write)
+        decl = to_string(self.decl)
         self.assertEqual(_l(decl), "const int& foo;\n")
 
 

@@ -4,7 +4,6 @@
 # License: MIT (see LICENSE for details)
 
 import jcppy.cpp as cpp
-from jcppy.cpp.config import config
 import jcppy.cpp.naming
 import jcppy.cpp.ast
 
@@ -27,7 +26,7 @@ class _Visibility(object):
 
 class Class(cpp.ast.AST):
     def __init__(self, name, namespace=None):
-        super(Class, self).__init__(name, cpp.naming.class_naming)
+        super(Class, self).__init__(name, cpp.naming.ClassNaming(self))
         self.struct = False
         self.namespace = namespace
         self.includes = []
@@ -45,24 +44,24 @@ class Class(cpp.ast.AST):
         for vis in self._all_vis:
             for base in vis.base:
                 decl_length += len(vis.name) + len(base) + 1
-                if config.classes.hide_private_inheritance and vis.name == "private":
+                if self.config.classes.hide_private_inheritance and vis.name == "private":
                     bases.append("{}".format(base))
                 else:
                     bases.append("{} {}".format(vis.name, base))
-        if decl_length > config.linewidth and len(bases):
+        if decl_length > self.config.linewidth and len(bases):
             out("{} {}".format(struct, self.name))
             iout = out.indent()[0]
             iout(": {}".format(bases[0]))
             for i in bases[1:-1]:
                 iout(", " + i)
-            if config.newline_before_curly_bracket:
+            if self.config.newline_before_curly_bracket:
                 iout(", " + bases[-1])
                 out("{")
             else:
                 iout("{} {{".format(bases[-1]))
         else:
             inheritance = " : " + ", ".join(bases) if len(bases) else ""
-            if config.newline_before_curly_bracket:
+            if self.config.newline_before_curly_bracket:
                 out("{} {}{}".format(struct, self.name, inheritance))
                 out("{")
             else:
@@ -72,8 +71,8 @@ class Class(cpp.ast.AST):
             if not vis.has_any():
                 return
 
-            if config.indent.class_visibility_specifier > 0:
-                out = out.indent(config.indent.class_visibility_specifier)[0]
+            if self.config.indent.class_visibility_specifier > 0:
+                out = out.indent(self.config.indent.class_visibility_specifier)[0]
 
             out("{}:".format(vis.name))
 

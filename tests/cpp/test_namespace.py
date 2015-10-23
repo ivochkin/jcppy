@@ -6,16 +6,10 @@
 import unittest
 import sys
 from jcppy.cpp.namespace import Namespace, make_namespace
-from jcppy.cpp.config import config
 from tests import _l, to_string
 
 
 class TestMakeNamespace(unittest.TestCase):
-    def setUp(self):
-        config.naming.namespace = "c"
-        config.naming.namespace_prefix = ""
-        config.naming.namespace_suffix = ""
-
     def test_zero(self):
         self.assertRaises(RuntimeError, make_namespace)
 
@@ -44,34 +38,34 @@ class TestMakeNamespace(unittest.TestCase):
 class TestNamespace(unittest.TestCase):
     def setUp(self):
         self.ns = make_namespace("foo", "bar")
-        config.indent.symbol = "  "
-        config.indent.namespace_declaration = 0
-        config.newline_before_curly_bracket = False
-        config.namespaces.group_right_brackets = True
-        config.naming.namespace = "c"
-        config.naming.namespace_prefix = ""
-        config.naming.namespace_suffix = ""
+        self.ns.config.indent.symbol = "  "
+        self.ns.config.indent.namespace_declaration = 0
+        self.ns.config.newline_before_curly_bracket = False
+        self.ns.config.namespaces.group_right_brackets = True
+        self.ns.config.naming.namespace = "c"
+        self.ns.config.naming.namespace_prefix = ""
+        self.ns.config.naming.namespace_suffix = ""
 
     def test_write_default(self):
-        header = to_string(self.ns.write_header)
-        footer = to_string(self.ns.write_footer)
+        header = to_string(self.ns, self.ns.write_header)
+        footer = to_string(self.ns, self.ns.write_footer)
         self.assertEqual(_l(header), "namespace foo {\nnamespace bar {\n")
         self.assertEqual(_l(footer), "}} // namespace foo::bar\n")
 
     def test_write_newline(self):
-        config.newline_before_curly_bracket = True
-        header = to_string(self.ns.write_header)
-        footer = to_string(self.ns.write_footer)
+        self.ns.config.newline_before_curly_bracket = True
+        header = to_string(self.ns, self.ns.write_header)
+        footer = to_string(self.ns, self.ns.write_footer)
         self.assertEqual(_l(header), "namespace foo\n{\nnamespace bar\n{\n")
         self.assertEqual(_l(footer), "}} // namespace foo::bar\n")
 
     def test_csharp_style(self):
-        config.newline_before_curly_bracket = True
-        config.indent.namespace_declaration = 1
-        config.namespaces.group_right_brackets = False
-        config.indent.symbol = "\t"
-        header = to_string(self.ns.write_header)
-        footer = to_string(self.ns.write_footer)
+        self.ns.config.newline_before_curly_bracket = True
+        self.ns.config.indent.namespace_declaration = 1
+        self.ns.config.namespaces.group_right_brackets = False
+        self.ns.config.indent.symbol = "\t"
+        header = to_string(self.ns, self.ns.write_header)
+        footer = to_string(self.ns, self.ns.write_footer)
         self.assertEqual(_l(header), "namespace foo\n{\n\tnamespace bar\n\t{\n")
         self.assertEqual(_l(footer), "} // namespace bar\n} // namespace foo\n")
 
@@ -81,15 +75,15 @@ class TestNaming(unittest.TestCase):
         self.ns = make_namespace("foo.bar")
 
     def test_default(self):
-        config.naming.namespace = "c"
-        config.naming.namespace_prefix = ""
-        config.naming.namespace_suffix = ""
+        self.ns.config.naming.namespace = "c"
+        self.ns.config.naming.namespace_prefix = ""
+        self.ns.config.naming.namespace_suffix = ""
         self.assertEqual(_l(self.ns.name), "foo_bar")
 
     def test_tricky(self):
-        config.naming.namespace = "pascal"
-        config.naming.namespace_prefix = "N"
-        config.naming.namespace_suffix = "_"
+        self.ns.config.naming.namespace = "pascal"
+        self.ns.config.naming.namespace_prefix = "N"
+        self.ns.config.naming.namespace_suffix = "_"
         self.assertEqual(_l(self.ns.name), "NFooBar_")
 
 

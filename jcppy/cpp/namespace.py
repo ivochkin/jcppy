@@ -3,13 +3,13 @@
 # Copyright (c) 2015 Stanislav Ivochkin <isn@extrn.org>
 # License: MIT (see LICENSE for details)
 
-from jcppy.cpp.config import config
-from jcppy.cpp.ast import AST
-from jcppy.cpp.naming import namespace_naming
+import jcppy.cpp as cpp
+import jcppy.cpp.ast
+import jcppy.cpp.naming
 
-class Namespace(AST):
+class Namespace(cpp.ast.AST):
     def __init__(self, name, parent=None):
-        super(Namespace, self).__init__(name, namespace_naming)
+        super(Namespace, self).__init__(name, cpp.naming.NamespaceNaming(self))
         self.parent = parent
         if not self.parent is None:
             assert(isinstance(self.parent, Namespace))
@@ -28,16 +28,16 @@ class Namespace(AST):
     def write_header(self, out):
         if not self.parent is None:
             self.parent.write_header(out)
-        if config.indent.namespace_declaration > 0:
-            out = out.indent(config.indent.namespace_declaration * (self.nesting_level() - 1))[0]
-        if config.newline_before_curly_bracket:
+        if self.config.indent.namespace_declaration > 0:
+            out = out.indent(self.config.indent.namespace_declaration * (self.nesting_level() - 1))[0]
+        if self.config.newline_before_curly_bracket:
             out("namespace {}".format(self.name))
             out("{")
         else:
             out("namespace {} {{".format(self.name))
 
     def write_footer(self, out):
-        if config.namespaces.group_right_brackets:
+        if self.config.namespaces.group_right_brackets:
             out("}" * self.nesting_level() + " // namespace " + self.full_name)
         else:
             out("} // namespace " + self.name)
@@ -51,5 +51,7 @@ def make_namespace(*names):
         raise RuntimeError("at least one name is expected")
     result = Namespace(names[0])
     for i in names[1:]:
-        result = Namespace(i, result)
+        child = Namespace(i, result)
+        child.parent = result
+        result = child
     return result

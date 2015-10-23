@@ -3,9 +3,10 @@
 # Copyright (c) 2015 Stanislav Ivochkin <isn@extrn.org>
 # License: MIT (see LICENSE for details)
 
-from jcppy.cpp.ast import AST
+import jcppy.cpp as cpp
+import jcppy.cpp.ast
 
-class Include(AST):
+class Include(cpp.ast.AST):
     STD_C = 0
     STD_CPP = 1
     CONTRIB_C = 3

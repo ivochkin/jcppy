@@ -3,7 +3,6 @@
 # Copyright (c) 2015 Stanislav Ivochkin <isn@extrn.org>
 # License: MIT (see LICENSE for details)
 
-
 class Naming(object):
     def __init__(self):
         """Naming can be
@@ -62,5 +61,3 @@ class Config(object):
         self.classes = Classes()
         self.newline_before_curly_bracket = False
         self.linewidth = 60
-
-config = Config()

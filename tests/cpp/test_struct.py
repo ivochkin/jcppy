@@ -6,7 +6,6 @@
 import unittest
 import sys
 from jcppy.builder import build
-from jcppy.cpp.config import config
 from jcppy.cpp.struct import Class
 from jcppy.cpp.type_ import Type
 from jcppy.cpp.variable import Variable
@@ -27,10 +26,10 @@ class TestClass(unittest.TestCase):
         self.cls.private.methods.append(upd)
 
     def test_full_featured(self):
-        config.newline_before_curly_bracket = True
-        config.indent.class_visibility_specifier = 0
-        config.linewidth = 100
-        decl = to_string(self.cls.write_declaration)
+        self.cls.config.newline_before_curly_bracket = True
+        self.cls.config.indent.class_visibility_specifier = 0
+        self.cls.config.linewidth = 100
+        decl = to_string(self.cls, self.cls.write_declaration)
         self.assertEqual(_l(decl),
 """\
 class MegaManager : public std::thread, boost::noncopyable

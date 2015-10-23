@@ -4,7 +4,6 @@
 # License: MIT (see LICENSE for details)
 
 import jcppy.cpp as cpp
-from jcppy.cpp.config import config
 import jcppy.cpp.ast
 import jcppy.cpp.naming
 import jcppy.cpp.include
@@ -14,7 +13,7 @@ import jcppy.cpp.type_
 
 class Function(cpp.ast.AST):
     def __init__(self, name):
-        super(Function, self).__init__(name, cpp.naming.function_naming)
+        super(Function, self).__init__(name, cpp.naming.FunctionNaming(self))
         self._namespace = None
         self._returns = cpp.type_.Type("void")
         self._args = []
@@ -121,7 +120,7 @@ class Function(cpp.ast.AST):
                                          " = 0" if self.pure_virtual else "")
 
     def write_declaration(self, out):
-        if len(self.declaration) <= config.linewidth or len(self.args) == 0:
+        if len(self.declaration) <= self.config.linewidth or len(self.args) == 0:
             out(self.declaration)
             return
 
@@ -129,7 +128,7 @@ class Function(cpp.ast.AST):
                                 " " if len(self.specifier) else "",
                                 self.returns.format_self(),
                                 self.name))
-        indent = out.indent(config.indent.function_declaration)[-1]
+        indent = out.indent(self.config.indent.function_declaration)[-1]
         for arg in self.args[:-1]:
             indent(arg.format_self() + ",")
         indent("{}){};".format(self.args[-1].format_self(), " = 0" if self.pure_virtual else ""))

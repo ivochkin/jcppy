@@ -4,7 +4,6 @@
 # License: MIT (see LICENSE for details)
 
 import jcppy.cpp as cpp
-from jcppy.cpp.config import config
 import jcppy.cpp.ast
 import jcppy.cpp.struct
 import jcppy.cpp.function

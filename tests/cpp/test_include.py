@@ -30,11 +30,11 @@ class TestIncludeNaming(unittest.TestCase):
 
     def test_quotes(self):
         self.include.quotes = True
-        self.assertEqual(_l(to_string(self.include.write)), "#include \"foobar\"\n")
+        self.assertEqual(_l(to_string(self.include)), "#include \"foobar\"\n")
 
     def test_brackets(self):
         self.include.quotes = False
-        self.assertEqual(_l(to_string(self.include.write)), "#include <foobar>\n")
+        self.assertEqual(_l(to_string(self.include)), "#include <foobar>\n")
 
 
 

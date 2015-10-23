@@ -3,8 +3,6 @@
 # Copyright (c) 2015 Stanislav Ivochkin <isn@extrn.org>
 # License: MIT (see LICENSE for details)
 
-from jcppy.cpp.config import config
-
 class Naming(object):
     def __init__(self, style_getter, prefix_getter, suffix_getter):
         self._style = style_getter
@@ -30,26 +28,43 @@ class Naming(object):
         return self._prefix() + name + self._suffix()
 
 
-function_naming = Naming(lambda: config.naming.function,
-                         lambda: config.naming.function_prefix,
-                         lambda: config.naming.function_suffix)
+class FunctionNaming(Naming):
+    def __init__(self, ast):
+        super(FunctionNaming, self).__init__(lambda: ast.config.naming.function,
+                                            lambda: ast.config.naming.function_prefix,
+                                            lambda: ast.config.naming.function_suffix)
 
-class_naming = Naming(lambda: config.naming.class_,
-                      lambda: config.naming.class_prefix,
-                      lambda: config.naming.class_suffix)
 
-namespace_naming = Naming(lambda: config.naming.namespace,
-                          lambda: config.naming.namespace_prefix,
-                          lambda: config.naming.namespace_suffix)
+class ClassNaming(Naming):
+    def __init__(self, ast):
+        super(ClassNaming, self).__init__(lambda: ast.config.naming.class_,
+                                            lambda: ast.config.naming.class_prefix,
+                                            lambda: ast.config.naming.class_suffix)
 
-variable_naming = Naming(lambda: config.naming.variable,
-                         lambda: config.naming.variable_prefix,
-                         lambda: config.naming.variable_suffix)
 
-member_naming = Naming(lambda: config.naming.member,
-                       lambda: config.naming.member_prefix,
-                       lambda: config.naming.member_suffix)
+class NamespaceNaming(Naming):
+    def __init__(self, ast):
+        super(NamespaceNaming, self).__init__(lambda: ast.config.naming.namespace,
+                                            lambda: ast.config.naming.namespace_prefix,
+                                            lambda: ast.config.naming.namespace_suffix)
 
-constant_naming = Naming(lambda: config.naming.constant,
-                         lambda: config.naming.constant_prefix,
-                         lambda: config.naming.constant_suffix)
+
+class VariableNaming(Naming):
+    def __init__(self, ast):
+        super(VariableNaming, self).__init__(lambda: ast.config.naming.variable,
+                                            lambda: ast.config.naming.variable_prefix,
+                                            lambda: ast.config.naming.variable_suffix)
+
+
+class MemberNaming(Naming):
+    def __init__(self, ast):
+        super(MemberNaming, self).__init__(lambda: ast.config.naming.member,
+                                            lambda: ast.config.naming.member_prefix,
+                                            lambda: ast.config.naming.member_suffix)
+
+
+class ConstantNaming(Naming):
+    def __init__(self, ast):
+        super(ConstantNaming, self).__init__(lambda: ast.config.naming.constant,
+                                            lambda: ast.config.naming.constant_prefix,
+                                            lambda: ast.config.naming.constant_suffix)

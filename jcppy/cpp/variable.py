@@ -9,7 +9,7 @@ import jcppy.cpp.ast
 
 class Variable(cpp.ast.AST):
     def __init__(self, typ, name):
-        super(Variable, self).__init__(name, cpp.naming.variable_naming)
+        super(Variable, self).__init__(name, cpp.naming.VariableNaming(self))
         self._type = typ
 
     @property
