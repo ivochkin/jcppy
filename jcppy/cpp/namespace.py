@@ -46,12 +46,20 @@ class Namespace(cpp.ast.AST):
         return out
 
 
+class NamespaceFactory(object):
+    def __init__(self):
+        self._cache = {}
+
+    def make(self, *names):
+        if len(names) == 0:
+            raise RuntimeError("at least one name is expected")
+        ns_prefix = names[0]
+        result = self._cache.setdefault(ns_prefix, Namespace(names[0]))
+        for i in names[1:]:
+            ns_prefix += "::" + i
+            result = self._cache.setdefault(ns_prefix, Namespace(i, result))
+        return result
+
+
 def make_namespace(*names):
-    if len(names) == 0:
-        raise RuntimeError("at least one name is expected")
-    result = Namespace(names[0])
-    for i in names[1:]:
-        child = Namespace(i, result)
-        child.parent = result
-        result = child
-    return result
+    return NamespaceFactory().make(*names)
