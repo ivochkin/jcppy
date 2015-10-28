@@ -2,7 +2,9 @@ language: python
 python:
   - "2.6"
   - "2.7"
-script: nosetests
+  - "3.4"
+  - "3.5"
+script: nosetests -v
 sudo: false
 notifications:
   recipients:
