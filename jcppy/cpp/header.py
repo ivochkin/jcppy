@@ -67,6 +67,8 @@ class Header(cpp.ast.AST):
         for i in self.functions + self.classes:
             ns_to_decl.setdefault(i.namespace, []).append(i)
 
+        nss = sorted(list(ns_to_decl.keys()), key=lambda x: '' if x is None else x.full_name)
+
         def _write_ns(ns):
             if ns:
                 ns.write_header(out)
@@ -87,16 +89,16 @@ class Header(cpp.ast.AST):
                 out()
                 ns.write_footer(out)
 
-        if len(ns_to_decl.keys()) and len(self.includes):
+        if len(nss) and len(self.includes):
             out()
 
-        for ns in list(ns_to_decl.keys())[:-1]:
+        for ns in nss[:-1]:
             _write_ns(ns)
             out()
-        if len(ns_to_decl.keys()):
-            _write_ns(list(ns_to_decl.keys())[-1])
+        if len(nss):
+            _write_ns(nss[-1])
 
-        if len(ns_to_decl.keys()) and self.include_guard:
+        if len(nss) and self.include_guard:
             out()
 
         if self.include_guard:
