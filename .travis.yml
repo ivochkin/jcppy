@@ -4,7 +4,9 @@ python:
   - "2.7"
   - "3.4"
   - "3.5"
-script: nosetests -v
+script:
+  - nosetests -v
+  - bash scripts/check_sources_header.sh
 sudo: false
 notifications:
   recipients:
