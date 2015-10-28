@@ -29,7 +29,7 @@ class TestMakeNamespace(unittest.TestCase):
         self.assertEqual(1, n.parent.nesting_level())
 
     def test_deep_nest(self):
-        ns = [str(i) for i in xrange(10)]
+        ns = [str(i) for i in range(10)]
         n = make_namespace(*ns)
         self.assertEqual(10, n.nesting_level())
         self.assertEqual("0::1::2::3::4::5::6::7::8::9", n.full_name)

@@ -90,11 +90,11 @@ class Header(cpp.ast.AST):
         if len(ns_to_decl.keys()) and len(self.includes):
             out()
 
-        for ns in ns_to_decl.keys()[:-1]:
+        for ns in list(ns_to_decl.keys())[:-1]:
             _write_ns(ns)
             out()
         if len(ns_to_decl.keys()):
-            _write_ns(ns_to_decl.keys()[-1])
+            _write_ns(list(ns_to_decl.keys())[-1])
 
         if len(ns_to_decl.keys()) and self.include_guard:
             out()
