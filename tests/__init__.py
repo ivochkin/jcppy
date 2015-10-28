@@ -4,7 +4,10 @@
 # License: MIT (see LICENSE for details)
 
 import os
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 from jcppy.writer import StreamWriter
 
 def _l(s): return s.replace("\n", os.linesep)
