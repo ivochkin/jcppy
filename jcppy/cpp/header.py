@@ -17,6 +17,10 @@ class Header(cpp.ast.AST):
         self.classes = []
 
     @property
+    def refs(self):
+        return self.functions + self.classes
+
+    @property
     def pragma_once(self):
         return self._pragma_once
     @pragma_once.setter

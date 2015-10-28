@@ -3,19 +3,15 @@
 # Copyright (c) 2015 Stanislav Ivochkin <isn@extrn.org>
 # License: MIT (see LICENSE for details)
 
-from __future__ import print_function
 import jcppy.cpp.config
+import jcppy.builder
+
 
 class AST(object):
-    def __init__(self, name=None, naming=lambda x: x, parent=None):
+    def __init__(self, name=None, naming=lambda x: x):
         self._name = name
         self._naming = naming
-        self._parent = parent
-        if self._parent is None:
-            self._config = jcppy.cpp.config.Config()
-        else:
-            self._config = None
-        self._chld = []
+        self._config = jcppy.cpp.config.Config()
 
     @property
     def name(self):
@@ -29,36 +25,33 @@ class AST(object):
 
     @property
     def config(self):
-        if self._parent is None:
-            return self._config
-        else:
-            return self._parent.config
+        return self._config
 
     @config.setter
     def config(self, new):
-        if self._parent is None:
-            self._config = new
-        else:
-            self._parent.config = new
+        self._config = new
 
     @property
-    def parent(self):
-        return self._parent
+    def refs(self):
+        """To be overriden"""
+        return []
 
-    @parent.setter
-    def parent(self, new):
-        if not self._parent is None:
-            self._parent._chld.remove(self)
-        if self._parent is None and not new is None:
-            self._config = None
-        self._parent = new
-        if not self._parent is None:
-            self._parent._chld.append(self)
+    def apply_config(self, new):
+        exclude_none = lambda x: [i for i in x if not i is None]
+        allrefs = set([self])
+        new_refs_found = True
+        while new_refs_found:
+            new_refs_found = False
+            newrefs = allrefs.copy()
+            for ast in allrefs:
+                for ref in exclude_none(ast.refs):
+                    newrefs.add(ref)
+            if len(newrefs) > len(allrefs):
+                new_refs_found = True
+                allrefs = newrefs
 
-    def print_tree(self, indent=0):
-        print("  " * indent + str(self))
-        for chld in self._chld:
-            chld.print_tree(indent + 1)
+        for ast in allrefs:
+            ast.config = new
 
     def __str__(self):
         return "<AST {0}>".format(self._name)

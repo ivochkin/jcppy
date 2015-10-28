@@ -23,6 +23,10 @@ class Function(cpp.ast.AST):
         self._pure_virtual = False
         self._cls = None
 
+    @property
+    def refs(self):
+        return [self._namespace] + self._args + self._includes
+
     # RW properties
 
     @property

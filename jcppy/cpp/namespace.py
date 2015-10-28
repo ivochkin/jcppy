@@ -15,6 +15,10 @@ class Namespace(cpp.ast.AST):
             assert(isinstance(self.parent, Namespace))
 
     @property
+    def refs(self):
+        return [self.parent]
+
+    @property
     def full_name(self):
         if self.parent is None:
             return self.name

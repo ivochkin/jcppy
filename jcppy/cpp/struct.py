@@ -36,6 +36,16 @@ class Class(cpp.ast.AST):
         self._all_vis = [self.public, self.protected, self.private]
         self.destructor = None
 
+    @property
+    def refs(self):
+        allrefs = [self.namespace] + self.includes
+        for vis in self._all_vis:
+            allrefs += vis.methods
+            allrefs += vis.members
+            allrefs += vis.consts
+            allrefs += vis.functions
+        return allrefs
+
     def write_declaration(self, out):
         struct = "struct" if self.struct else "class"
 
