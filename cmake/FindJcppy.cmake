@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Stanislav Ivochkin <isn@extrn.org>
+# Copyright (c) 2014-2016 Stanislav Ivochkin <isn@extrn.org>
 # License: MIT (see LICENSE for details).
 
 include(CMakeParseArguments)

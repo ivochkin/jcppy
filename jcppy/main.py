@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2015 Stanislav Ivochkin <isn@extrn.org>
+# Copyright (c) 2015-2016 Stanislav Ivochkin <isn@extrn.org>
 # License: MIT (see LICENSE for details)
 
 def main():
