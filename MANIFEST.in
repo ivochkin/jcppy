@@ -1,0 +1,2 @@
+include jcppy/data/*
+include jcppy/data/templates/*
