@@ -1,2 +1,2 @@
-include jcppy/data/*
+include jcppy/data/*.c
 include jcppy/data/templates/*

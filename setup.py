@@ -13,7 +13,7 @@ setup(
     url="https://github.com/ivochkin/jcppy",
     packages=["jcppy"],
     include_package_data=True,
-    package_data={"jcppy": ["data/*"]},
+    package_data={"jcppy": ["data/*.c", "data/templates/*"]},
     entry_points={
         "console_scripts": [
             "jcppy= jcppy.cli:main"
