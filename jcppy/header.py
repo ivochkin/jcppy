@@ -32,6 +32,10 @@ def header(env, schema):
             e.update(make_names(prop_name))
             e.update(make_types(prop["type"]))
             yield render("property_storage.h", env, e)
-    yield render("class_footer.h", env, make_names(schema["title"]))
-    yield render("reader.h", env, make_names(schema["title"]))
-    yield render("class_template_impl.h", env, make_names(schema["title"]))
+    envs = [env, make_names(schema["title"])]
+    yield render("class_footer.h", *envs)
+    yield render("reader.h", *envs)
+    yield render("writer.h", *envs)
+    yield render("class_template_impl.h", *envs)
+    yield render("reader_impl.h", *envs)
+    yield render("writer_impl.h", *envs)

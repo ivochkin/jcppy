@@ -1,32 +1,25 @@
 class {{Name}}Reader
 {
 public:
-  {{Name}}Reader();
+  explicit {{Name}}Reader(bool throwExceptionOnError);
 
-  void read(std::istream& stream, std::size_t count);
+  std::size_t read(std::istream& stream, std::size_t count);
 
-  void read(const char* data, std::size_t size);
+  std::size_t read(const char* data, std::size_t size);
 
   template<class Iterator>
-  void read(Iterator begin, Iterator end)
-  {
-    while (begin != end) {
-      readByte(*begin);
-      ++begin;
-    }
-  }
+  Iterator read(Iterator begin, Iterator end);
 
-  bool done() const;
-  void ensureDone() const;
+  int error() const;
 
   {{Name}}& instance();
   {{Name}}* mutableInstance();
 
 private:
-  void readByte(char value);
+  bool readByte(char value);
 
   {{Name}} instance_;
-  bool done_;
+  bool throwExceptionOnError_;
 };
 
 

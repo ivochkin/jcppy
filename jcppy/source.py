@@ -24,3 +24,4 @@ def source(env, schema):
             e.update(make_types(prop["type"]))
             yield render("primitive_property.cpp", env, e)
     yield render("reader.cpp", env, make_names(schema["title"]))
+    yield render("writer.cpp", env, make_names(schema["title"]))
