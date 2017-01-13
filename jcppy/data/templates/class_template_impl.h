@@ -1,9 +1,8 @@
 template<class Iterator>
 {{Name}} {{Name}}::fromJson(Iterator begin, Iterator end)
 {
-  {{Name}}Reader reader(true);
+  {{Name}}Reader reader;
   reader.read(begin, end);
-  reader.ensureDone();
   return reader.instance();
 };
 

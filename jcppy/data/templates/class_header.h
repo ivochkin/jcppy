@@ -7,6 +7,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <vector>
 #include <cstddef>
 #include <stdint.h>
 
@@ -14,7 +15,6 @@
 class {{Name}}
 {
 public:
-
   {{Name}}();
 
   static {{Name}} fromJson(const std::string& json);
@@ -30,6 +30,6 @@ public:
   static {{Name}} readJson(std::istream& stream);
 
   std::string toJson() const;
-  void writeJson(std::ostream& stream) const;
+  std::ostream& writeJson(std::ostream& stream) const;
 
 

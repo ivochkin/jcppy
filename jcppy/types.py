@@ -8,7 +8,7 @@ def storage_type(typ):
         "integer": "int64_t",
         "number": "double",
         "string": "std::string",
-        "bool": "bool",
+        "boolean": "bool",
     }.get(typ)
 
 def argument_type(typ):
@@ -16,7 +16,7 @@ def argument_type(typ):
         "integer": "int64_t",
         "number": "double",
         "string": "const std::string&",
-        "bool": "bool",
+        "boolean": "bool",
     }.get(typ)
 
 def return_type(typ):

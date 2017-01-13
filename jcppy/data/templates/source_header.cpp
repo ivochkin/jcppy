@@ -7,6 +7,9 @@
 #include <cstring>
 #include <sstream>
 #include <stdexcept>
+#include <algorithm>
+#include <inttypes.h>
+#include <cstring>
 #include "{{header_filename}}"
 
 /*********************************************************/
@@ -32,7 +35,6 @@
 {
   {{Name}}Reader reader;
   reader.read(json, size);
-  reader.ensureDone();
   return reader.instance();
 }
 
@@ -45,7 +47,6 @@
     std::size_t nread = stream ? sizeof(buffer) : stream.gcount();
     reader.read(buffer, nread);
   }
-  reader.ensureDone();
   return reader.instance();
 }
 
@@ -56,8 +57,12 @@ std::string {{Name}}::toJson() const
   return ss.str();
 }
 
-void {{Name}}::writeJson(std::ostream& stream) const
+std::ostream& {{Name}}::writeJson(std::ostream& stream) const
 {
+  std::ostream_iterator<char> out(stream);
+  {{Name}}Writer writer(this);
+  writer.write(out, true);
+  return stream;
 }
 
 

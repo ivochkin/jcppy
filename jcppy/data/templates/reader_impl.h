@@ -1,13 +1,17 @@
 template<class Iterator>
-Iterator {{Name}}Reader::read(Iterator begin, Iterator end)
+Iterator {{Name}}Reader::read(Iterator begin, Iterator end, bool throwOnError)
 {
-  while (begin != end) {
-    if (!readByte(*begin)) {
-      break;
+  Iterator i = begin;
+  for (; i != end; ++i) {
+    readByte(*i);
+    if (error_) {
+      if (throwOnError) {
+        throw std::runtime_error(errorMessage());
+      }
+      return i;
     }
-    ++begin;
   }
-  return begin;
+  return i;
 }
 
 

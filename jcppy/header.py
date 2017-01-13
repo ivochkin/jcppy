@@ -35,7 +35,7 @@ def header(env, schema):
     envs = [env, make_names(schema["title"])]
     yield render("class_footer.h", *envs)
     yield render("reader.h", *envs)
-    yield render("writer.h", *envs)
+    yield render("writer.h", *envs, {"nproperties": len(schema["properties"])})
     yield render("class_template_impl.h", *envs)
     yield render("reader_impl.h", *envs)
     yield render("writer_impl.h", *envs)
