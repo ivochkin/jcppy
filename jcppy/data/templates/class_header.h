@@ -24,8 +24,8 @@ public:
   template<class Iterator>
   static {{Name}} fromJson(Iterator begin, Iterator end);
 
-  template<class Container>
-  static {{Name}} fromJson(const Container& container);
+  template<class Iterable>
+  static {{Name}} fromJson(const Iterable& iterable);
 
   static {{Name}} readJson(std::istream& stream);
 

@@ -8,8 +8,10 @@
 #include <sstream>
 #include <stdexcept>
 #include <algorithm>
+#include <iterator>
 #include <inttypes.h>
 #include <cstring>
+#include <cstdio>
 #include "{{header_filename}}"
 
 /*********************************************************/

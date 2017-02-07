@@ -17,7 +17,7 @@
 {%- endmacro -%}
 
 {%- macro snprintf(p, format, getter_extra="") -%}
-int nwritten = snprintf(buffer, buffer_end - buffer,
+int nwritten = std::snprintf(buffer, buffer_end - buffer,
     "{{ leading_snprintf_fmt(p) }}\"{{ p["name"] }}\":{{ format }}", {{ leading_snprintf_val(p, ",") }} object_->{{ p["name"] }}(){{ getter_extra }});
 if (nwritten <= 0) {
   break;

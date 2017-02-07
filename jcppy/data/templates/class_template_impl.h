@@ -6,10 +6,10 @@ template<class Iterator>
   return reader.instance();
 };
 
-template<class Container>
-{{Name}} {{Name}}::fromJson(const Container& container)
+template<class Iterable>
+{{Name}} {{Name}}::fromJson(const Iterable& iterable)
 {
-  return fromJson(container.begin(), container.end());
+  return fromJson(iterable.begin(), iterable.end());
 }
 
 
