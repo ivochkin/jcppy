@@ -91,3 +91,10 @@ const char* {{Name}}Writer::errorMessage() const
 }
 
 
+std::ostream& operator<<(std::ostream& os, const {{Name}}& obj)
+{
+  obj.writeJson(os);
+  return os;
+}
+
+
