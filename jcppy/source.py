@@ -29,7 +29,6 @@ def source(env, schema):
             continue
         e = make_property_env(schema, prop_name, prop)
         yield render("primitive_property.cpp", env, e)
-    yield render("reader.cpp", env, make_names(schema["title"]))
     all_properties = []
     found_first_required = False
     found_leading_optional = False
@@ -48,7 +47,8 @@ def source(env, schema):
             else:
                 found_first_required = True
         all_properties.append(penv)
-    writer_env = {
+    rw_env = {
         "properties": all_properties
     }
-    yield render("writer.cpp", env, make_names(schema["title"]), writer_env)
+    yield render("reader.cpp", env, make_names(schema["title"]), rw_env)
+    yield render("writer.cpp", env, make_names(schema["title"]), rw_env)
