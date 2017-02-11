@@ -6,49 +6,49 @@ digraph finite_state_machine {
   node [shape=doublecircle label="DONE"] done;
 
   node [shape=circle label="INIT"] init;
-  node [label="START READ\nPROPERTY NAME"] start_read_property_name;
-  node [label="READING\nPROPERTY NAME"] reading_property_name;
-  node [label="READING\nPROPERTY VALUE"] reading_property_value;
-	node [label="READING\nSTRING VALUE"] reading_string_value;
-	node [label="READING\nNESTED OBJECT" style=dotted] reading_nested_object;
-	node [label="READING\nARRAY ELEMENT" style=solid] reading_array_element;
-	node [label="READING\nNESTED OBJECT" style=dotted]
-		reading_array_nested_object;
-	node [label="READING\nNESTED ARRAY" style=dotted]
-		reading_array_nested_array;
-	node [label="READING\nSTRING VALUE" style=solid] reading_array_string_value;
+  node [label="NEAR\nPROPERTY NAME"] start_read_property_name;
+  node [label="PROPERTY NAME"] reading_property_name;
+  node [label="PROPERTY VALUE"] reading_property_value;
+  node [label="STRING VALUE"] reading_string_value;
+  node [label="NESTED OBJECT" style=dotted] reading_nested_object;
+  node [label="ARRAY ELEMENT" style=solid] reading_array_element;
+  node [label="NESTED OBJECT" style=dotted]
+    reading_array_nested_object;
+  node [label="NESTED ARRAY" style=dotted]
+    reading_array_nested_array;
+  node [label="STRING ARRAY\nVALUE" style=solid] reading_string_array_value;
 
   entry -> init;
 
   init -> start_read_property_name [label=" object_begin "];
-	start_read_property_name -> reading_property_name [label=" string_begin "];
-	start_read_property_name -> done [label=" object_end "];
-	reading_property_name -> reading_property_name [label=" string_chunk "];
-	reading_property_name -> reading_property_value [label=" string_end "];
-	reading_property_value -> start_read_property_name
-		[label= " null, bool, int, double "];
-	reading_property_value -> reading_string_value [label=" string_begin "];
-	reading_string_value -> reading_string_value [label=" string_chunk "];
-	reading_string_value -> start_read_property_name [label=" string_end "];
-	reading_property_value -> reading_nested_object
-		[style=dotted label=" object_begin "];
-	reading_nested_object -> start_read_property_name
-		[style=dotted label=" object_end "];
-	reading_property_value -> reading_array_element
-		[style=solid label=" array_begin "];
-	reading_array_element -> reading_array_nested_object
-		[style=dotted label=" object_begin "];
-	reading_array_nested_object -> reading_array_element
-		[style=dotted label=" object_end "];
-	reading_array_element -> reading_array_nested_array
-		[style=dotted label=" array_begin "];
-	reading_array_nested_array -> reading_array_element
-		[style=dotted label=" array_end "];
-	reading_array_element -> reading_array_element
-		[label= " null, bool, int, double "];
-	reading_array_element -> reading_array_string_value [label=" string_begin "];
-	reading_array_string_value -> reading_array_string_value
-		[label=" string_chunk"];
-	reading_array_string_value -> reading_array_element [label=" string_end"];
-	reading_array_element -> start_read_property_name [label=" array_end "];
+  start_read_property_name -> reading_property_name [label=" string_begin "];
+  start_read_property_name -> done [label=" object_end "];
+  reading_property_name -> reading_property_name [label=" string_chunk "];
+  reading_property_name -> reading_property_value [label=" string_end "];
+  reading_property_value -> start_read_property_name
+    [label= " null, bool, int, double "];
+  reading_property_value -> reading_string_value [label=" string_begin "];
+  reading_string_value -> reading_string_value [label=" string_chunk "];
+  reading_string_value -> start_read_property_name [label=" string_end "];
+  reading_property_value -> reading_nested_object
+    [style=dotted label=" object_begin "];
+  reading_nested_object -> start_read_property_name
+    [style=dotted label=" object_end "];
+  reading_property_value -> reading_array_element
+    [style=solid label=" array_begin "];
+  reading_array_element -> reading_array_nested_object
+    [style=dotted label=" object_begin "];
+  reading_array_nested_object -> reading_array_element
+    [style=dotted label=" object_end "];
+  reading_array_element -> reading_array_nested_array
+    [style=dotted label=" array_begin "];
+  reading_array_nested_array -> reading_array_element
+    [style=dotted label=" array_end "];
+  reading_array_element -> reading_array_element
+    [label= " null, bool, int, double "];
+  reading_array_element -> reading_string_array_value [label=" string_begin "];
+  reading_string_array_value -> reading_string_array_value
+    [label=" string_chunk"];
+  reading_string_array_value -> reading_array_element [label=" string_end"];
+  reading_array_element -> start_read_property_name [label=" array_end "];
 }
