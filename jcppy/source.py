@@ -8,7 +8,7 @@ from jcppy.render import render
 from jcppy.env import make_names, make_types
 
 def make_property_env(schema, prop_name, prop):
-    required = prop_name in schema.get("required")
+    required = prop_name in schema.get("required", [])
     e = {
         "required": required,
         "optional": not required,

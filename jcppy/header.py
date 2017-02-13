@@ -13,7 +13,7 @@ def header(env, schema):
     yield render("class_header.h", env, make_names(schema["title"]))
     for prop_name, prop in schema["properties"].items():
         if prop["type"] not in ["object", "array"]:
-            required = prop_name in schema.get("required")
+            required = prop_name in schema.get("required", [])
             e = {
                 "required": required,
                 "optional": not required,
@@ -24,7 +24,7 @@ def header(env, schema):
     yield "private:" + os.linesep
     for prop_name, prop in schema["properties"].items():
         if prop["type"] not in ["object", "array"]:
-            required = prop_name in schema.get("required")
+            required = prop_name in schema.get("required", [])
             e = {
                 "required": required,
                 "optional": not required,
