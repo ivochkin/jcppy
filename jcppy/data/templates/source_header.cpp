@@ -12,12 +12,17 @@
 #include <inttypes.h>
 #include <cstring>
 #include <cstdio>
+#include <cstddef>
 #include "{{header_filename}}"
 
 /*********************************************************/
 /*         Inline embedjson library goes below           */
 /*********************************************************/
 
+#define EMBEDJSON_DYNAMIC_STACK 0
+#define EMBEDJSON_STATIC_STACK_SIZE 16
+#define EMBEDJSON_VALIDATE_UTF8 1
+#define EMBEDJSON_SIZE_T std::size_t
 {{embedjson}}
 
 /*********************************************************/
